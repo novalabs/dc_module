@@ -1,0 +1,24 @@
+{
+  "name": "dc",
+  "description": "DC",
+  "chip": "STM32F303CB",
+  "required_packages": [
+    "common_msgs",
+    "led",
+    "A4957_driver",
+    "actuator_msgs",
+    "actuator_subscriber",
+    "QEI_driver",
+    "sensor_msgs",
+    "sensor_publisher"
+  ],
+  "chibios_components": [
+    "rt",
+    "hal",
+    "adc",
+    "ext",
+    "pal",
+    "pwm",
+    "syscalls"
+  ]
+}
