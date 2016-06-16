@@ -3,7 +3,7 @@
  * All rights reserved. All use of this software and documentation is
  * subject to the License Agreement located in the file LICENSE.
  */
- 
+
 #include <Core/MW/Middleware.hpp>
 
 #include "ch.h"
@@ -26,10 +26,10 @@ using LED_PAD = Core::HW::Pad_<Core::HW::GPIO_F, LED_PIN>;
 static LED_PAD _led;
 
 using HBRIDGE_RESET_PAD = Core::HW::Pad_<Core::HW::GPIO_B, GPIOB_MOTOR_ENABLE>;
-using HBRIDGE_FAULT_PAD     = Core::HW::Pad_<Core::HW::GPIO_A, GPIOA_MOTOR_D1>;
+using HBRIDGE_FAULT_PAD = Core::HW::Pad_<Core::HW::GPIO_A, GPIOA_MOTOR_D1>;
 
 static HBRIDGE_RESET_PAD _hbridge_reset;
-static HBRIDGE_FAULT_PAD     _hbridge_fault;
+static HBRIDGE_FAULT_PAD _hbridge_fault;
 
 static sensors::QEI       _qei_device(ENCODER_DEVICE);
 static sensors::QEI_Delta _qei_delta(_qei_device);
