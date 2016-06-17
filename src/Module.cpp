@@ -17,24 +17,24 @@
 #include <QEI_driver/QEI.hpp>
 #include <A4957_driver/A4957.hpp>
 
-static Core::HW::QEI_<Core::HW::QEI_4> ENCODER_DEVICE;
+static Core::HW::QEI_<Core::HW::QEI_4> _encoder;
 
-static Core::HW::PWMChannel_<Core::HW::PWM_1, 0> PWM_CHANNEL_0;
-static Core::HW::PWMChannel_<Core::HW::PWM_1, 1> PWM_CHANNEL_1;
+static Core::HW::PWMChannel_<Core::HW::PWM_1, 0> _pwm_channel_0;
+static Core::HW::PWMChannel_<Core::HW::PWM_1, 1> _pwm_channel_1;
 
-using LED_PAD = Core::HW::Pad_<Core::HW::GPIO_F, LED_PIN>;
+using LED_PAD = Core::HW::Pad_<Core::HW::GPIO_F, GPIOF_LED>;
 static LED_PAD _led;
 
-using HBRIDGE_RESET_PAD = Core::HW::Pad_<Core::HW::GPIO_B, GPIOB_MOTOR_ENABLE>;
-using HBRIDGE_FAULT_PAD = Core::HW::Pad_<Core::HW::GPIO_A, GPIOA_MOTOR_D1>;
+using HBRIDGE_RESET_PAD = Core::HW::Pad_<Core::HW::GPIO_B, GPIOB_RESET>;
+using HBRIDGE_FAULT_PAD = Core::HW::Pad_<Core::HW::GPIO_A, GPIOB_FAULT>;
 
 static HBRIDGE_RESET_PAD _hbridge_reset;
 static HBRIDGE_FAULT_PAD _hbridge_fault;
 
-static sensors::QEI       _qei_device(ENCODER_DEVICE);
+static sensors::QEI       _qei_device(_encoder);
 static sensors::QEI_Delta _qei_delta(_qei_device);
 
-static actuators::A4957 _pwm_device(PWM_CHANNEL_0, PWM_CHANNEL_1, _hbridge_reset, _hbridge_fault);
+static actuators::A4957 _pwm_device(_pwm_channel_0, _pwm_channel_1, _hbridge_reset, _hbridge_fault);
 static actuators::A4957_SignMagnitude _pwm(_pwm_device);
 
 sensors::QEI_Delta& Module::qei = _qei_delta;
@@ -55,11 +55,14 @@ QEIConfig qei_config = {
  * PWM configuration.
  */
 static PWMConfig pwmcfg = {
-   36000000,                         /* 36MHz PWM clock.   */
-   4096,                             /* 12-bit PWM, 9KHz frequency. */
-   nullptr,                          {{PWM_OUTPUT_ACTIVE_HIGH, NULL}, {PWM_OUTPUT_ACTIVE_HIGH, NULL}, {PWM_OUTPUT_DISABLED, NULL}, {
-                                         PWM_OUTPUT_DISABLED, NULL
-                                      }}, 0,
+   72000000,/* 72MHz PWM clock.   */
+   4096,    /* 12-bit PWM, 18KHz frequency. */
+   nullptr, {
+      {PWM_OUTPUT_ACTIVE_HIGH | PWM_COMPLEMENTARY_OUTPUT_ACTIVE_HIGH,NULL},
+      {PWM_OUTPUT_ACTIVE_HIGH | PWM_COMPLEMENTARY_OUTPUT_ACTIVE_HIGH,NULL},
+      {PWM_OUTPUT_DISABLED,NULL},
+      {PWM_OUTPUT_DISABLED,NULL}
+   }, 0, 72
 };
 
 #ifndef CORE_MODULE_NAME
@@ -89,7 +92,7 @@ Module::initialize()
       Core::MW::Middleware::instance.start();
 
 
-      ENCODER_DEVICE.start(&qei_config);
+      _encoder.start(&qei_config);
       pwmStart(Core::HW::PWM_1::driver, &pwmcfg);
 
       initialized = true;
