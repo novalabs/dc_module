@@ -11,7 +11,7 @@
 #include <led/Subscriber.hpp>
 
 // --- BOARD IMPL -------------------------------------------------------------
-#include <qei_driver/QEI.hpp>
+#include <QEI_driver/QEI.hpp>
 #include <A4957_driver/A4957.hpp>
 
 // *** DO NOT MOVE ***
