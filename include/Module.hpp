@@ -10,6 +10,8 @@
 #include <Core/MW/CoreModule.hpp>
 #include <Core/MW/CoreSensor.hpp>
 
+#include <functional>
+
 // Forward declarations
 namespace sensors {
    class QEI_Delta;
@@ -25,8 +27,16 @@ class Module:
 public:
 // --- DEVICES ----------------------------------------------------------------
    static sensors::QEI_Delta& qei;
-   static actuators::A4957_SignMagnitude& pwm;
+   static actuators::A4957_SignMagnitude& hbridge_pwm;
 // ----------------------------------------------------------------------------
+
+   static void
+   setPWMCallback(
+      std::function<void()>callback
+   );                                                          //!< Sets the callback that will be called every PWM cycle
+
+   static void
+   resetPWMCallback();
 
    static bool
    initialize();

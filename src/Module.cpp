@@ -19,6 +19,8 @@
 
 static Core::HW::QEI_<Core::HW::QEI_4> _encoder;
 
+static Core::HW::PWMMaster_<Core::HW::PWM_1> _pwm_1;
+
 static Core::HW::PWMChannel_<Core::HW::PWM_1, 0> _pwm_channel_0;
 static Core::HW::PWMChannel_<Core::HW::PWM_1, 1> _pwm_channel_1;
 
@@ -38,7 +40,7 @@ static actuators::A4957 _pwm_device(_pwm_channel_0, _pwm_channel_1, _hbridge_res
 static actuators::A4957_SignMagnitude _pwm(_pwm_device);
 
 sensors::QEI_Delta& Module::qei = _qei_delta;
-actuators::A4957_SignMagnitude& Module::pwm = _pwm;
+actuators::A4957_SignMagnitude& Module::hbridge_pwm = _pwm;
 
 static THD_WORKING_AREA(wa_info, 1024);
 static Core::MW::RTCANTransport rtcantra(RTCAND1);
@@ -100,6 +102,20 @@ Module::initialize()
 
    return initialized;
 } // Board::initialize
+
+void
+Module::setPWMCallback(
+   std::function<void()>callback
+)
+{
+   _pwm_1.setCallback(callback);
+}
+
+void
+Module::resetPWMCallback()
+{
+   _pwm_1.resetCallback();
+}
 
 // Leftover from CoreBoard (where LED_PAD cannot be defined
 void
