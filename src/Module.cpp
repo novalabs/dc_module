@@ -17,7 +17,7 @@
 #include <QEI_driver/QEI.hpp>
 #include <A4957_driver/A4957.hpp>
 
-static Core::HW::QEI_<Core::HW::QEI_4> _encoder;
+static Core::HW::QEI_<Core::HW::QEI_2> _encoder;
 
 static Core::HW::PWMMaster_<Core::HW::PWM_1> _pwm_1;
 
