@@ -87,7 +87,7 @@
 /*
  * CAN driver system settings.
  */
-#define STM32_CAN_USE_CAN1                  TRUE
+#define STM32_CAN_USE_CAN1                  FALSE
 #define STM32_CAN_CAN1_IRQ_PRIORITY         11
 
 /*
@@ -184,7 +184,7 @@
 /*
  * SPI driver system settings.
  */
-#define STM32_SPI_USE_SPI1                  FALSE
+#define STM32_SPI_USE_SPI1                  TRUE
 #define STM32_SPI_USE_SPI2                  FALSE
 #define STM32_SPI_USE_SPI3                  FALSE
 #define STM32_SPI_SPI1_DMA_PRIORITY         1
@@ -226,8 +226,8 @@
  * QEI driver system settings.
  */
 #define STM32_QEI_USE_TIM1                  FALSE
-#define STM32_QEI_USE_TIM2                  FALSE
+#define STM32_QEI_USE_TIM2                  TRUE
 #define STM32_QEI_USE_TIM3                  FALSE
-#define STM32_QEI_USE_TIM4                  TRUE
+#define STM32_QEI_USE_TIM4                  FALSE
 #define STM32_QEI_USE_TIM5                  FALSE
 #define STM32_QEI_USE_TIM8                  FALSE
