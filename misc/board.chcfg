@@ -10,7 +10,7 @@
   <board_name>DC module</board_name>
   <board_id>dc_module</board_id>
   <board_functions></board_functions>
-  <subtype>STM32F30X</subtype>
+  <subtype>STM32F303xC</subtype>
   <clocks HSEFrequency="24000000" HSEBypass="true" LSEFrequency="0"
   	LSEBypass="false" LSEDrive="3 High Drive (default)" />
   <ports>
