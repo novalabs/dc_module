@@ -4,12 +4,13 @@
   xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/boards/stm32f3xx_board.xsd">
   <configuration_settings>
   	<templates_path>resources/gencfg/processors/boards/stm32f3xx/templates</templates_path>
-  	<output_path>../</output_path>
+  	<output_path>./</output_path>
+  	<hal_version>3.0.x</hal_version>
   </configuration_settings>
   <board_name>DC module</board_name>
   <board_id>dc_module</board_id>
   <board_functions></board_functions>
-  <subtype>STM32F30X</subtype>
+  <subtype>STM32F303xC</subtype>
   <clocks HSEFrequency="24000000" HSEBypass="true" LSEFrequency="0"
   	LSEBypass="false" LSEDrive="3 High Drive (default)" />
   <ports>
@@ -153,15 +154,15 @@
         Mode="Input"
         Alternate="0" />
       <pin1
-        ID=""
+        ID="VCS"
         Type="PushPull"
         Speed="Minimum"
-        Resistor="PullUp"
+        Resistor="Floating"
         Level="High"
-        Mode="Input"
+        Mode="Analog"
         Alternate="0" ></pin1>
       <pin2
-        ID="VCS"
+        ID=""
         Type="PushPull"
         Speed="Maximum"
         Resistor="Floating"
