@@ -4,46 +4,46 @@
  * subject to the License Agreement located in the file LICENSE.
  */
 
-#include <Core/MW/Middleware.hpp>
+#include <core/mw/Middleware.hpp>
 
 #include "ch.h"
 #include "hal.h"
 
-#include <Core/HW/GPIO.hpp>
-#include <Core/HW/QEI.hpp>
-#include <Core/HW/PWM.hpp>
-#include <Core/MW/Thread.hpp>
+#include <core/hw/GPIO.hpp>
+#include <core/hw/QEI.hpp>
+#include <core/hw/PWM.hpp>
+#include <core/os/Thread.hpp>
 #include <Module.hpp>
-#include <QEI_driver/QEI.hpp>
-#include <A4957_driver/A4957.hpp>
+#include <core/QEI_driver/QEI.hpp>
+#include <core/A4957_driver/A4957.hpp>
 
-static Core::HW::QEI_<Core::HW::QEI_2> _encoder;
+static core::hw::QEI_<core::hw::QEI_2> _encoder;
 
-static Core::HW::PWMMaster_<Core::HW::PWM_1> _pwm_1;
+static core::hw::PWMMaster_<core::hw::PWM_1> _pwm_1;
 
-static Core::HW::PWMChannel_<Core::HW::PWM_1, 0> _pwm_channel_0;
-static Core::HW::PWMChannel_<Core::HW::PWM_1, 1> _pwm_channel_1;
+static core::hw::PWMChannel_<core::hw::PWM_1, 0> _pwm_channel_0;
+static core::hw::PWMChannel_<core::hw::PWM_1, 1> _pwm_channel_1;
 
-using LED_PAD = Core::HW::Pad_<Core::HW::GPIO_F, GPIOF_LED>;
+using LED_PAD = core::hw::Pad_<core::hw::GPIO_F, GPIOF_LED>;
 static LED_PAD _led;
 
-using HBRIDGE_RESET_PAD = Core::HW::Pad_<Core::HW::GPIO_B, GPIOB_RESET>;
-using HBRIDGE_FAULT_PAD = Core::HW::Pad_<Core::HW::GPIO_A, GPIOB_FAULT>;
+using HBRIDGE_RESET_PAD = core::hw::Pad_<core::hw::GPIO_B, GPIOB_RESET>;
+using HBRIDGE_FAULT_PAD = core::hw::Pad_<core::hw::GPIO_A, GPIOB_FAULT>;
 
 static HBRIDGE_RESET_PAD _hbridge_reset;
 static HBRIDGE_FAULT_PAD _hbridge_fault;
 
-static sensors::QEI       _qei_device(_encoder);
-static sensors::QEI_Delta _qei_delta(_qei_device);
+static core::QEI_driver::QEI       _qei_device(_encoder);
+static core::QEI_driver::QEI_Delta _qei_delta("m_encoder", _qei_device);
 
-static actuators::A4957 _pwm_device(_pwm_channel_0, _pwm_channel_1, _hbridge_reset, _hbridge_fault);
-static actuators::A4957_SignMagnitude _pwm(_pwm_device);
+static core::A4957_driver::A4957 _pwm_device(_pwm_1, _pwm_channel_0, _pwm_channel_1, _hbridge_reset, _hbridge_fault);
+static core::A4957_driver::A4957_SignMagnitude _pwm("m_pwm", _pwm_device);
 
-sensors::QEI_Delta& Module::qei = _qei_delta;
-actuators::A4957_SignMagnitude& Module::hbridge_pwm = _pwm;
+core::QEI_driver::QEI_Delta& Module::qei = _qei_delta;
+core::A4957_driver::A4957_SignMagnitude& Module::hbridge_pwm = _pwm;
 
 static THD_WORKING_AREA(wa_info, 1024);
-static Core::MW::RTCANTransport rtcantra(RTCAND1);
+static core::mw::RTCANTransport rtcantra(RTCAND1);
 
 RTCANConfig rtcan_config = {
    1000000, 100, 60
@@ -71,7 +71,7 @@ static PWMConfig pwmcfg = {
 #define CORE_MODULE_NAME "UDC"
 #endif
 
-Core::MW::Middleware Core::MW::Middleware::instance(CORE_MODULE_NAME, "BOOT_" CORE_MODULE_NAME);
+core::mw::Middleware core::mw::Middleware::instance(CORE_MODULE_NAME, "BOOT_" CORE_MODULE_NAME);
 
 Module::Module()
 {}
@@ -79,7 +79,7 @@ Module::Module()
 bool
 Module::initialize()
 {
-//	CORE_ASSERT(Core::MW::Middleware::instance.is_stopped()); // TODO: capire perche non va...
+//	CORE_ASSERT(core::mw::Middleware::instance.is_stopped()); // TODO: capire perche non va...
 
    static bool initialized = false;
 
@@ -89,13 +89,13 @@ Module::initialize()
 
       chSysInit();
 
-      Core::MW::Middleware::instance.initialize(wa_info, sizeof(wa_info), Core::MW::Thread::LOWEST);
+      core::mw::Middleware::instance.initialize(wa_info, sizeof(wa_info), core::os::Thread::LOWEST);
       rtcantra.initialize(rtcan_config);
-      Core::MW::Middleware::instance.start();
+      core::mw::Middleware::instance.start();
 
 
       _encoder.start(&qei_config);
-      pwmStart(Core::HW::PWM_1::driver, &pwmcfg);
+      pwmStart(core::hw::PWM_1::driver, &pwmcfg);
 
       initialized = true;
    }
@@ -119,13 +119,13 @@ Module::resetPWMCallback()
 
 // Leftover from CoreBoard (where LED_PAD cannot be defined
 void
-Core::MW::CoreModule::Led::toggle()
+core::mw::CoreModule::Led::toggle()
 {
    _led.toggle();
 }
 
 void
-Core::MW::CoreModule::Led::write(
+core::mw::CoreModule::Led::write(
    unsigned on
 )
 {
