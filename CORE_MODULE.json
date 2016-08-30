@@ -19,6 +19,9 @@
     "ext",
     "pal",
     "pwm",
-    "syscalls"
+    "serial",
+    "uart",
+    "syscalls",
+    "chprintf"
   ]
 }
