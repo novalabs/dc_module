@@ -28,7 +28,7 @@ using LED_PAD = core::hw::Pad_<core::hw::GPIO_F, GPIOF_LED>;
 static LED_PAD _led;
 
 using HBRIDGE_RESET_PAD = core::hw::Pad_<core::hw::GPIO_B, GPIOB_RESET>;
-using HBRIDGE_FAULT_PAD = core::hw::Pad_<core::hw::GPIO_A, GPIOB_FAULT>;
+using HBRIDGE_FAULT_PAD = core::hw::Pad_<core::hw::GPIO_B, GPIOB_FAULT>;
 
 static HBRIDGE_RESET_PAD _hbridge_reset;
 static HBRIDGE_FAULT_PAD _hbridge_fault;
