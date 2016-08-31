@@ -42,8 +42,8 @@ static core::A4957_driver::A4957_SignMagnitude _pwm("m_pwm", _pwm_device);
 core::QEI_driver::QEI_Delta& Module::qei = _qei_delta;
 core::A4957_driver::A4957_SignMagnitude& Module::hbridge_pwm = _pwm;
 
-static THD_WORKING_AREA(wa_info, 1024);
-static core::mw::RTCANTransport rtcantra(RTCAND1);
+static core::os::Thread::Stack<1024> management_thread_stack;
+static core::mw::RTCANTransport      rtcantra(RTCAND1);
 
 RTCANConfig rtcan_config = {
    1000000, 100, 60
@@ -89,7 +89,7 @@ Module::initialize()
 
       chSysInit();
 
-      core::mw::Middleware::instance.initialize(wa_info, sizeof(wa_info), core::os::Thread::LOWEST);
+      core::mw::Middleware::instance.initialize(management_thread_stack, management_thread_stack.size(), core::os::Thread::LOWEST);
       rtcantra.initialize(rtcan_config);
       core::mw::Middleware::instance.start();
 
