@@ -8,7 +8,6 @@
 
 #include <ModuleConfiguration.hpp>
 #include <core/mw/CoreModule.hpp>
-#include <core/mw/CoreSensor.hpp>
 
 #include <functional>
 
