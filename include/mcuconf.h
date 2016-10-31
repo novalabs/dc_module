@@ -82,7 +82,7 @@
 #define STM32_ADC_ADC34_DMA_IRQ_PRIORITY    5
 #define STM32_ADC_ADC12_CLOCK_MODE          ADC_CCR_CKMODE_AHB_DIV1
 #define STM32_ADC_ADC34_CLOCK_MODE          ADC_CCR_CKMODE_AHB_DIV1
-#define STM32_ADC_DUAL_MODE                 FALSE
+#define STM32_ADC_DUAL_MODE                 TRUE
 
 /*
  * CAN driver system settings.

@@ -65,7 +65,7 @@ static PWMConfig pwmcfg = {
       {PWM_OUTPUT_ACTIVE_HIGH | PWM_COMPLEMENTARY_OUTPUT_ACTIVE_HIGH,NULL},
       {PWM_OUTPUT_DISABLED,NULL},
       {PWM_OUTPUT_DISABLED,NULL}
-   }, 0, 72
+   }, 1 << 5, 72
 };
 
 #ifndef CORE_MODULE_NAME
@@ -97,6 +97,7 @@ Module::initialize()
 
       _encoder.start(&qei_config);
       pwmStart(core::hw::PWM_1::driver, &pwmcfg);
+      core::hw::PWM_1::driver->tim->CR1 |= STM32_TIM_CR1_CMS(2);
 
       initialized = true;
    }
