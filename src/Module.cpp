@@ -44,7 +44,7 @@ core::QEI_driver::QEI_Delta& Module::qei = _qei_delta;
 core::A4957_driver::A4957_SignMagnitude& Module::hbridge_pwm = _pwm;
 
 static core::os::Thread::Stack<1024> management_thread_stack;
-static core::mw::RTCANTransport      rtcantra(RTCAND1);
+static core::mw::RTCANTransport      rtcantra(&RTCAND1);
 
 RTCANConfig rtcan_config = {
    1000000, 100, 60
