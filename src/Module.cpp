@@ -59,7 +59,7 @@ QEIConfig qei_config = {
  */
 static PWMConfig pwmcfg = {
    72000000,/* 72MHz PWM clock.   */
-   4096,    /* 12-bit PWM, 18KHz frequency. */
+   2048,    /* 12-bit PWM, 18KHz frequency. */
    nullptr, {
       {PWM_OUTPUT_ACTIVE_HIGH | PWM_COMPLEMENTARY_OUTPUT_ACTIVE_HIGH,NULL},
       {PWM_OUTPUT_ACTIVE_HIGH | PWM_COMPLEMENTARY_OUTPUT_ACTIVE_HIGH,NULL},
