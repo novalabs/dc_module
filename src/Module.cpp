@@ -1,4 +1,4 @@
-/* COPYRIGHT (c) 2016 Nova Labs SRL
+/* COPYRIGHT (c) 2016-2017 Nova Labs SRL
  *
  * All rights reserved. All use of this software and documentation is
  * subject to the License Agreement located in the file LICENSE.
@@ -118,17 +118,40 @@ Module::resetPWMCallback()
    _pwm_1.resetCallback();
 }
 
-// Leftover from CoreBoard (where LED_PAD cannot be defined
+// ----------------------------------------------------------------------------
+// CoreModule HW specific implementation
+// ----------------------------------------------------------------------------
+
 void
 core::mw::CoreModule::Led::toggle()
 {
-   _led.toggle();
+    _led.toggle();
 }
 
 void
 core::mw::CoreModule::Led::write(
-   unsigned on
+    unsigned on
 )
 {
-   _led.write(on);
+    _led.write(on);
+}
+
+void
+core::mw::CoreModule::reset()
+{
+}
+
+void
+core::mw::CoreModule::keepAlive()
+{
+}
+
+void
+core::mw::CoreModule::disableBootloader()
+{
+}
+
+void
+core::mw::CoreModule::enableBootloader()
+{
 }
