@@ -1,7 +1,7 @@
 {
   "name": "dc",
   "description": "DC",
-  "chip": "STM32F303CB",
+  "chip": "STM32F303CC",
   "required_packages": [
     "common_msgs",
     "led",
