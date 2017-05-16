@@ -29,50 +29,50 @@ PWM_Subscriber motor("actuator_sub", module.hbridge_pwm, core::os::Thread::Prior
 
 // --- MAIN -------------------------------------------------------------------
 extern "C" {
-   int
-   main()
-   {
-      module.initialize();
+    int
+    main()
+    {
+        module.initialize();
 
-      // Add nodes to the node manager (== board)...
-      module.add(led_subscriber);
-      module.add(encoder);
-      module.add(motor);
+        // Add nodes to the node manager (== board)...
+        module.add(led_subscriber);
+        module.add(encoder);
+        module.add(motor);
 
-      // Module configuration
-      core::QEI_driver::QEI_DeltaConfiguration qei_configuration;
-      qei_configuration.period = 50;
-      qei_configuration.ticks  = 1000;
-      module.qei.setConfiguration(qei_configuration);
+        // Module configuration
+        core::QEI_driver::QEI_DeltaConfiguration qei_configuration;
+        qei_configuration.period = 50;
+        qei_configuration.ticks  = 1000;
+        module.qei.setConfiguration(qei_configuration);
 
-      // Nodes configuration
-      core::led::SubscriberConfiguration led_subscriber_configuration;
-      led_subscriber_configuration.topic = "led";
-      led_subscriber.setConfiguration(led_subscriber_configuration);
+        // Nodes configuration
+        core::led::SubscriberConfiguration led_subscriber_configuration;
+        led_subscriber_configuration.topic = "led";
+        led_subscriber.setConfiguration(led_subscriber_configuration);
 
-      core::actuator_subscriber::Configuration motor_configuration;
-      motor_configuration.topic = "pwm";
-      motor.setConfiguration(motor_configuration);
+        core::actuator_subscriber::Configuration motor_configuration;
+        motor_configuration.topic = "pwm";
+        motor.setConfiguration(motor_configuration);
 
-      core::sensor_publisher::Configuration encoder_configuration;
-      encoder_configuration.topic = "encoder";
-      encoder.setConfiguration(encoder_configuration);
+        core::sensor_publisher::Configuration encoder_configuration;
+        encoder_configuration.topic = "encoder";
+        encoder.setConfiguration(encoder_configuration);
 
-      // ... and let's play!
-      module.setup();
-      module.run();
+        // ... and let's play!
+        module.setup();
+        module.run();
 
-      // Is everything going well?
-      for (;;) {
-         if (!module.isOk()) {
-            module.halt("This must not happen!");
-         }
+        // Is everything going well?
+        for (;;) {
+            if (!module.isOk()) {
+                module.halt("This must not happen!");
+            }
 
-         module.keepAlive();
+            module.keepAlive();
 
-         core::os::Thread::sleep(core::os::Time::ms(500));
-      }
+            core::os::Thread::sleep(core::os::Time::ms(500));
+        }
 
-      return core::os::Thread::OK;
-   } // main
+        return core::os::Thread::OK;
+    } // main
 }
