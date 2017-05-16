@@ -13,6 +13,7 @@
 #include <core/hw/GPIO.hpp>
 #include <core/hw/QEI.hpp>
 #include <core/hw/PWM.hpp>
+#include <core/hw/IWDG.hpp>
 #include <core/os/Thread.hpp>
 #include <Module.hpp>
 #include <core/QEI_driver/QEI.hpp>
@@ -46,33 +47,39 @@ core::A4957_driver::A4957_SignMagnitude& Module::hbridge_pwm = _pwm;
 static core::os::Thread::Stack<1024> management_thread_stack;
 static core::mw::RTCANTransport      rtcantra(&RTCAND1);
 
-RTCANConfig rtcan_config = {
-   1000000, 100, 60
-};
-
 QEIConfig qei_config = {
-   QEI_MODE_QUADRATURE, QEI_BOTH_EDGES, QEI_DIRINV_FALSE,
+    QEI_MODE_QUADRATURE, QEI_BOTH_EDGES, QEI_DIRINV_FALSE,
 };
 
 /*
  * PWM configuration.
  */
 static PWMConfig pwmcfg = {
-   72000000,/* 72MHz PWM clock.   */
-   4096,    /* 12-bit PWM, 18KHz frequency. */
-   nullptr, {
-      {PWM_OUTPUT_ACTIVE_HIGH | PWM_COMPLEMENTARY_OUTPUT_ACTIVE_HIGH,NULL},
-      {PWM_OUTPUT_ACTIVE_HIGH | PWM_COMPLEMENTARY_OUTPUT_ACTIVE_HIGH,NULL},
-      {PWM_OUTPUT_DISABLED,NULL},
-      {PWM_OUTPUT_DISABLED,NULL}
-   }, 0, 72
+    72000000,/* 72MHz PWM clock.   */
+    4096,    /* 12-bit PWM, 18KHz frequency. */
+    nullptr, {
+        {PWM_OUTPUT_ACTIVE_HIGH | PWM_COMPLEMENTARY_OUTPUT_ACTIVE_HIGH,NULL},
+        {PWM_OUTPUT_ACTIVE_HIGH | PWM_COMPLEMENTARY_OUTPUT_ACTIVE_HIGH,NULL},
+        {PWM_OUTPUT_DISABLED,NULL},
+        {PWM_OUTPUT_DISABLED,NULL}
+    }, 0, 72
 };
 
-#ifndef CORE_MODULE_NAME
-#define CORE_MODULE_NAME "UDC"
-#endif
+RTCANConfig rtcan_config = {
+    1000000, 100, 60
+};
 
-core::mw::Middleware core::mw::Middleware::instance(CORE_MODULE_NAME, "BOOT_" CORE_MODULE_NAME);
+// ----------------------------------------------------------------------------
+// CoreModule STM32FlashConfigurationStorage
+// ----------------------------------------------------------------------------
+#include <core/snippets/CoreModuleSTM32FlashConfigurationStorage.hpp>
+// ----------------------------------------------------------------------------
+
+core::mw::Middleware
+core::mw::Middleware::instance(
+    ModuleConfiguration::MODULE_NAME
+);
+
 
 Module::Module()
 {}
@@ -82,76 +89,43 @@ Module::initialize()
 {
 //	CORE_ASSERT(core::mw::Middleware::instance.is_stopped()); // TODO: capire perche non va...
 
-   static bool initialized = false;
+    static bool initialized = false;
 
-   if (!initialized) {
-      halInit();
-      qeiInit();
+    if (!initialized) {
+        halInit();
+        qeiInit();
 
-      chSysInit();
+        chSysInit();
 
-      core::mw::Middleware::instance.initialize(management_thread_stack, management_thread_stack.size(), core::os::Thread::LOWEST);
-      rtcantra.initialize(rtcan_config);
-      core::mw::Middleware::instance.start();
+        core::mw::Middleware::instance.initialize(name(), management_thread_stack, management_thread_stack.size(), core::os::Thread::LOWEST);
+        rtcantra.initialize(rtcan_config, canID());
+        core::mw::Middleware::instance.start();
 
+        _encoder.start(&qei_config);
+        pwmStart(core::hw::PWM_1::driver, &pwmcfg);
 
-      _encoder.start(&qei_config);
-      pwmStart(core::hw::PWM_1::driver, &pwmcfg);
+        initialized = true;
+    }
 
-      initialized = true;
-   }
-
-   return initialized;
+    return initialized;
 } // Board::initialize
 
 void
 Module::setPWMCallback(
-   std::function<void()>callback
+    std::function<void()>callback
 )
 {
-   _pwm_1.setCallback(callback);
+    _pwm_1.setCallback(callback);
 }
 
 void
 Module::resetPWMCallback()
 {
-   _pwm_1.resetCallback();
+    _pwm_1.resetCallback();
 }
 
 // ----------------------------------------------------------------------------
 // CoreModule HW specific implementation
 // ----------------------------------------------------------------------------
-
-void
-core::mw::CoreModule::Led::toggle()
-{
-    _led.toggle();
-}
-
-void
-core::mw::CoreModule::Led::write(
-    unsigned on
-)
-{
-    _led.write(on);
-}
-
-void
-core::mw::CoreModule::reset()
-{
-}
-
-void
-core::mw::CoreModule::keepAlive()
-{
-}
-
-void
-core::mw::CoreModule::disableBootloader()
-{
-}
-
-void
-core::mw::CoreModule::enableBootloader()
-{
-}
+#include <core/snippets/CoreModuleHWSpecificImplementation.hpp>
+// ----------------------------------------------------------------------------

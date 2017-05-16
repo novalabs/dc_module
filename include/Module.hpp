@@ -24,27 +24,38 @@ class A4957_SignMagnitude;
 }
 }
 
+#if CORE_USE_CONFIGURATION_STORAGE
+namespace core {
+namespace mw {
+class CoreConfigurationStorage;
+}
+}
+#endif
+
 class Module:
-   public core::mw::CoreModule
+    public core::mw::CoreModule
 {
 public:
 // --- DEVICES ----------------------------------------------------------------
-   static core::QEI_driver::QEI_Delta& qei;
-   static core::A4957_driver::A4957_SignMagnitude& hbridge_pwm;
+    static core::QEI_driver::QEI_Delta& qei;
+    static core::A4957_driver::A4957_SignMagnitude& hbridge_pwm;
 // ----------------------------------------------------------------------------
 
-   static void
-   setPWMCallback(
-      std::function<void()>callback
-   );                                                          //!< Sets the callback that will be called every PWM cycle
+    static void
+    setPWMCallback(
+        std::function<void()>callback
+    );                                                         //!< Sets the callback that will be called every PWM cycle
 
-   static void
-   resetPWMCallback();
+    static void
+    resetPWMCallback();
 
-   static bool
-   initialize();
+    static bool
+    initialize();
 
 
-   Module();
-   virtual ~Module() {}
+#if CORE_USE_CONFIGURATION_STORAGE
+    static core::mw::CoreConfigurationStorage& configurationStorage;
+#endif
+    Module();
+    virtual ~Module() {}
 };

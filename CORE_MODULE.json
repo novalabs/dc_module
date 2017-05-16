@@ -10,7 +10,8 @@
     "actuator_subscriber",
     "QEI_driver",
     "sensor_msgs",
-    "sensor_publisher"
+    "sensor_publisher",
+    "snippets"
   ],
   "chibios_components": [
     "rt",
