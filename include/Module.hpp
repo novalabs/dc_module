@@ -13,6 +13,13 @@
 
 // Forward declarations
 namespace core {
+namespace hw {
+class QEI;
+class PWMMaster;
+}
+}
+
+namespace core {
 namespace QEI_driver {
 class QEI_Delta;
 }
@@ -24,38 +31,22 @@ class A4957_SignMagnitude;
 }
 }
 
-#if CORE_USE_CONFIGURATION_STORAGE
-namespace core {
-namespace mw {
-class CoreConfigurationStorage;
-}
-}
-#endif
-
 class Module:
     public core::mw::CoreModule
 {
 public:
 // --- DEVICES ----------------------------------------------------------------
-    static core::QEI_driver::QEI_Delta& qei;
-    static core::A4957_driver::A4957_SignMagnitude& hbridge_pwm;
+    static core::hw::QEI&       qei;
+    static core::hw::PWMMaster& pwm;
+
+    static core::QEI_driver::QEI_Delta& encoder;
+    static core::A4957_driver::A4957_SignMagnitude& h_bridge;
 // ----------------------------------------------------------------------------
-
-    static void
-    setPWMCallback(
-        std::function<void()>callback
-    );                                                         //!< Sets the callback that will be called every PWM cycle
-
-    static void
-    resetPWMCallback();
 
     static bool
     initialize();
 
 
-#if CORE_USE_CONFIGURATION_STORAGE
-    static core::mw::CoreConfigurationStorage& configurationStorage;
-#endif
     Module();
     virtual ~Module() {}
 };

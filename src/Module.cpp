@@ -9,76 +9,63 @@
 
 #include "ch.h"
 #include "hal.h"
+#include <core/snippets/CortexMxFaultHandlers.h>
 
 #include <core/hw/GPIO.hpp>
 #include <core/hw/QEI.hpp>
 #include <core/hw/PWM.hpp>
 #include <core/hw/IWDG.hpp>
 #include <core/os/Thread.hpp>
+
 #include <Module.hpp>
+
 #include <core/QEI_driver/QEI.hpp>
 #include <core/A4957_driver/A4957.hpp>
 
-static core::hw::QEI_<core::hw::QEI_2> _encoder;
-
-static core::hw::PWMMaster_<core::hw::PWM_1> _pwm_1;
-
-static core::hw::PWMChannel_<core::hw::PWM_1, 0> _pwm_channel_0;
-static core::hw::PWMChannel_<core::hw::PWM_1, 1> _pwm_channel_1;
-
+// LED
 using LED_PAD = core::hw::Pad_<core::hw::GPIO_F, GPIOF_LED>;
 static LED_PAD _led;
 
-using HBRIDGE_RESET_PAD = core::hw::Pad_<core::hw::GPIO_B, GPIOB_RESET>;
-using HBRIDGE_FAULT_PAD = core::hw::Pad_<core::hw::GPIO_B, GPIOB_FAULT>;
-
-static HBRIDGE_RESET_PAD _hbridge_reset;
-static HBRIDGE_FAULT_PAD _hbridge_fault;
-
-static core::QEI_driver::QEI       _qei_device(_encoder);
+// ENCODER
+using ENCODER_DEVICE = core::hw::QEI_<core::hw::QEI_2>;
+static ENCODER_DEVICE              _encoder_device;
+static core::QEI_driver::QEI       _qei_device(_encoder_device);
 static core::QEI_driver::QEI_Delta _qei_delta("m_encoder", _qei_device);
 
-static core::A4957_driver::A4957 _pwm_device(_pwm_1, _pwm_channel_0, _pwm_channel_1, _hbridge_reset, _hbridge_fault);
-static core::A4957_driver::A4957_SignMagnitude _pwm("m_pwm", _pwm_device);
+// H-BRIDGE
+using PWM_MASTER        = core::hw::PWMMaster_<core::hw::PWM_1>;
+using PWM_CHANNEL_0     = core::hw::PWMChannel_<PWM_MASTER::PWM, 0>;
+using PWM_CHANNEL_1     = core::hw::PWMChannel_<PWM_MASTER::PWM, 1>;
+using HBRIDGE_RESET_PAD = core::hw::Pad_<core::hw::GPIO_B, GPIOB_RESET>;
+using HBRIDGE_FAULT_PAD = core::hw::Pad_<core::hw::GPIO_B, GPIOB_FAULT>;
+static PWM_MASTER                _pwm_master;
+static PWM_CHANNEL_0             _pwm_channel_0;
+static PWM_CHANNEL_0             _pwm_channel_1;
+static HBRIDGE_RESET_PAD         _hbridge_reset;
+static HBRIDGE_FAULT_PAD         _hbridge_fault;
+static core::A4957_driver::A4957 _pwm_device(_pwm_master, _pwm_channel_0, _pwm_channel_1, _hbridge_reset, _hbridge_fault);
+static core::A4957_driver::A4957_SignMagnitude _h_bridge("m_motor", _pwm_device);
 
-core::QEI_driver::QEI_Delta& Module::qei = _qei_delta;
-core::A4957_driver::A4957_SignMagnitude& Module::hbridge_pwm = _pwm;
+// MODULE DEVICES
+core::hw::QEI& Module::qei = _encoder_device;
+core::QEI_driver::QEI_Delta& Module::encoder = _qei_delta;
+core::hw::PWMMaster&         Module::pwm     = _pwm_master;
+core::A4957_driver::A4957_SignMagnitude& Module::h_bridge = _h_bridge;
 
+
+// SYSTEM STUFF
 static core::os::Thread::Stack<1024> management_thread_stack;
 static core::mw::RTCANTransport      rtcantra(&RTCAND1);
-
-QEIConfig qei_config = {
-    QEI_MODE_QUADRATURE, QEI_BOTH_EDGES, QEI_DIRINV_FALSE,
-};
-
-/*
- * PWM configuration.
- */
-static PWMConfig pwmcfg = {
-    72000000,/* 72MHz PWM clock.   */
-    4096,    /* 12-bit PWM, 18KHz frequency. */
-    nullptr, {
-        {PWM_OUTPUT_ACTIVE_HIGH | PWM_COMPLEMENTARY_OUTPUT_ACTIVE_HIGH,NULL},
-        {PWM_OUTPUT_ACTIVE_HIGH | PWM_COMPLEMENTARY_OUTPUT_ACTIVE_HIGH,NULL},
-        {PWM_OUTPUT_DISABLED,NULL},
-        {PWM_OUTPUT_DISABLED,NULL}
-    }, 0, 72
-};
-
-RTCANConfig rtcan_config = {
-    1000000, 100, 60
-};
-
-// ----------------------------------------------------------------------------
-// CoreModule STM32FlashConfigurationStorage
-// ----------------------------------------------------------------------------
-#include <core/snippets/CoreModuleSTM32FlashConfigurationStorage.hpp>
-// ----------------------------------------------------------------------------
 
 core::mw::Middleware
 core::mw::Middleware::instance(
     ModuleConfiguration::MODULE_NAME
 );
+
+
+RTCANConfig rtcan_config = {
+    1000000, 100, 60
+};
 
 
 Module::Module()
@@ -87,7 +74,7 @@ Module::Module()
 bool
 Module::initialize()
 {
-//	CORE_ASSERT(core::mw::Middleware::instance.is_stopped()); // TODO: capire perche non va...
+    FAULT_HANDLERS_ENABLE(true);
 
     static bool initialized = false;
 
@@ -101,28 +88,17 @@ Module::initialize()
         rtcantra.initialize(rtcan_config, canID());
         core::mw::Middleware::instance.start();
 
-        _encoder.start(&qei_config);
-        pwmStart(core::hw::PWM_1::driver, &pwmcfg);
-
         initialized = true;
     }
 
     return initialized;
 } // Board::initialize
 
-void
-Module::setPWMCallback(
-    std::function<void()>callback
-)
-{
-    _pwm_1.setCallback(callback);
-}
-
-void
-Module::resetPWMCallback()
-{
-    _pwm_1.resetCallback();
-}
+// ----------------------------------------------------------------------------
+// CoreModule STM32FlashConfigurationStorage
+// ----------------------------------------------------------------------------
+#include <core/snippets/CoreModuleSTM32FlashConfigurationStorage.hpp>
+// ----------------------------------------------------------------------------
 
 // ----------------------------------------------------------------------------
 // CoreModule HW specific implementation

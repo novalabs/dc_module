@@ -11,6 +11,8 @@
     "QEI_driver",
     "sensor_msgs",
     "sensor_publisher",
+    "stm32_flash",
+    "stm32_crc",
     "snippets"
   ],
   "chibios_components": [
@@ -20,9 +22,6 @@
     "ext",
     "pal",
     "pwm",
-    "serial",
-    "uart",
-    "syscalls",
-    "chprintf"
+    "syscalls"
   ]
 }
