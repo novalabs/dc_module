@@ -11,6 +11,7 @@
     "QEI_driver",
     "sensor_msgs",
     "sensor_publisher",
+    "stm32_qei",
     "stm32_flash",
     "stm32_crc",
     "snippets"
