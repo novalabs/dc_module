@@ -4,7 +4,14 @@
   "module": "dc",
   "os_version": "CHIBIOS_16",
   "required_os_components": [],
-  "required_packages": [],
+  "required_packages": [
+    "common_msgs",
+    "led",
+    "actuator_msgs",
+    "actuator_subscriber",
+    "sensor_msgs",
+    "sensor_publisher"
+  ],
   "sources": [
     "main.cpp"
   ],
