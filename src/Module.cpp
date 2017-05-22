@@ -7,8 +7,6 @@
 #include <core/mw/Middleware.hpp>
 #include <core/mw/transport/RTCANTransport.hpp>
 
-#include "ch.h"
-#include "hal.h"
 #include <core/snippets/CortexMxFaultHandlers.h>
 
 #include <core/hw/GPIO.hpp>
@@ -23,7 +21,7 @@
 #include <core/A4957_driver/A4957.hpp>
 
 // LED
-using LED_PAD = core::hw::Pad_<core::hw::GPIO_F, GPIOF_LED>;
+using LED_PAD = core::hw::Pad_<core::hw::GPIO_F, LED_PIN>;
 static LED_PAD _led;
 
 // ENCODER
@@ -79,10 +77,8 @@ Module::initialize()
     static bool initialized = false;
 
     if (!initialized) {
-        halInit();
+        core::mw::CoreModule::initialize();
         qeiInit();
-
-        chSysInit();
 
         core::mw::Middleware::instance.initialize(name(), management_thread_stack, management_thread_stack.size(), core::os::Thread::LOWEST);
         rtcantra.initialize(rtcan_config, canID());
