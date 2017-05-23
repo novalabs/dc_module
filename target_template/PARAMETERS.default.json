@@ -11,7 +11,8 @@
     },
     "m_encoder": {
       "ticks": 1000.0,
-      "period": 50
+      "period": 50,
+      "invert": 0
     },
     "led_sub": {
       "topic": "led"
