@@ -24,7 +24,6 @@
 /*
  * Board identifier.
  */
-#define BOARD_dc_module
 #define BOARD_NAME                  "DC module"
 
 /*
