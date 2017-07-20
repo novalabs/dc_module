@@ -78,12 +78,13 @@ core::hw::PWMMaster::Configuration pwm_configuration = {
     4096,   /* 12-bit PWM, 9KHz frequency. */
     nullptr,
     {
-        {PWM_OUTPUT_ACTIVE_HIGH,NULL                     },
-        {PWM_OUTPUT_ACTIVE_HIGH,NULL                     },
-        {PWM_OUTPUT_DISABLED,NULL                     },
-        {PWM_OUTPUT_DISABLED,NULL                     }
+      {PWM_OUTPUT_ACTIVE_HIGH | PWM_COMPLEMENTARY_OUTPUT_ACTIVE_HIGH,NULL},
+      {PWM_OUTPUT_ACTIVE_HIGH | PWM_COMPLEMENTARY_OUTPUT_ACTIVE_HIGH,NULL},
+      {PWM_OUTPUT_DISABLED,NULL},
+      {PWM_OUTPUT_DISABLED,NULL}
     },
     0,
+    36 // 1 us dead time
 };
 
 core::hw::ADCConversionGroup::Configuration current_sense_adc_configuration = {
