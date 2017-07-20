@@ -5,10 +5,13 @@
   "os_version": "CHIBIOS_16",
   "required_os_components": [],
   "required_packages": [
+    "A4957_driver",
+    "QEI_driver",
     "common_msgs",
     "led",
     "actuator_msgs",
     "actuator_subscriber",
+    "basic_sensors",
     "sensor_msgs",
     "sensor_publisher"
   ],
@@ -16,6 +19,6 @@
     "main.cpp"
   ],
   "includes": [],
-  "bootloader_size": 16384,
-  "configuration_size": 2048
+  "bootloader_size": 0,
+  "configuration_size": 0
 }

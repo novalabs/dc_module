@@ -3,11 +3,9 @@
   "description": "DC",
   "chip": "STM32F303CC",
   "required_packages": [
-    "A4957_driver",
     "stm32_qei",
     "stm32_flash",
     "stm32_crc",
-    "QEI_driver",
     "snippets"
   ],
   "chibios_components": [
