@@ -139,7 +139,7 @@ extern "C" {
         core::hw::PWM_1::driver->tim->EGR  |= STM32_TIM_EGR_CC4G;
         core::hw::PWM_1::driver->tim->DIER |= STM32_TIM_DIER_CC4IE;
 
-        core::hw::PWM_1::driver->tim->CCR[3] = 2048;
+        core::hw::PWM_1::driver->tim->CCR[3] = 512;
 
         core::hw::PWM_1::driver->tim->CR1 |= STM32_TIM_CR1_CEN; // Enable the counter
 
