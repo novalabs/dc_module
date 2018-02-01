@@ -1,6 +1,6 @@
 {
   "name": "dc",
-  "description": "DC",
+  "description": "Nova Core DC module",
   "chip": "STM32F303CC",
   "required_packages": [
     "stm32_qei",
